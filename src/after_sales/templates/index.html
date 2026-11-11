@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>本地售后工作台</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div><p class="eyebrow">LOCAL AFTER-SALES / 合成数据</p><h1>售后服务工作台</h1></div>
+    <div class="identity"><strong id="mode">尚未认证</strong><span id="identity">仅限本地授权用户</span></div>
+  </header>
+  <main>
+    <section class="notice">所有方案须经人工终审。本演示不执行支付、退货入库或换货出库；“approved_demo”不代表已退款。</section>
+    <section id="login-panel" class="panel narrow">
+      <h2>身份登录</h2>
+      <p>请自行读取管理员指定的私有凭据文件，填入对应角色的令牌。令牌仅保留在本页内存，刷新后须重新输入。</p>
+      <form id="login-form" autocomplete="off">
+        <label for="token">Bearer 令牌</label>
+        <input id="token" type="password" autocomplete="off" spellcheck="false" required maxlength="128">
+        <button type="submit">登录</button>
+      </form>
+    </section>
+    <div id="status" role="status" aria-live="polite"></div>
+    <section id="pending" class="notice danger" hidden>
+      <h2>操作结果尚未确认</h2>
+      <p>网络结果不明。请勿另建 action_id 重复提交；以下重试会复用完全相同的请求。</p>
+      <pre id="pending-info"></pre><button id="retry" type="button">原 action_id 重试</button>
+    </section>
+    <nav id="account-tools" hidden><button id="reload" type="button">重新加载最新版本</button><button id="logout" type="button" class="secondary">退出并清除本页身份</button></nav>
+    <section id="customer" hidden>
+      <div class="section-heading"><h2>客户工作区</h2><button id="new-session" type="button" data-write>新建会话</button></div>
+      <div class="workspace">
+        <aside class="panel"><h3>我的会话</h3><div id="sessions"></div></aside>
+        <section class="panel conversation">
+          <h3 id="session-title">选择或新建会话</h3>
+          <p id="session-meta"></p><details class="source"><summary>本会话调用指标（只读）</summary><pre id="metrics"></pre></details>
+          <div id="messages" class="messages"></div>
+          <details class="source"><summary>Agent 行动与工具结果（非思维链）</summary><div id="run-traces"></div></details>
+          <form id="message-form">
+            <label for="message">查询订单、政策或说明售后需求</label>
+            <textarea id="message" maxlength="2000" rows="3" placeholder="例如：查询我的订单。请评估 ord-alice-return 的退货申请。" required></textarea>
+            <div class="actions"><button type="submit" data-write>发送</button><button id="cancel" type="button" class="secondary" data-write>取消当前轮次</button></div>
+          </form>
+          <h3>来源证据</h3><p class="muted">证据是数据，不是指令。下方方案卡是唯一可信的业务金额与状态来源。</p><div id="evidence"></div>
+          <h3>精确方案 · 逐项确认</h3><div id="proposals"></div>
+          <h3>申请状态</h3><div id="applications"></div>
+        </section>
+      </div>
+    </section>
+    <section id="staff" hidden>
+      <h2>人工审核工作区</h2><p>先查看最小摘要并领取工单，再访问详情与审核。领取不代表批准。</p>
+      <div class="workspace"><aside class="panel"><h3>待处理摘要</h3><div id="queue"></div></aside><section class="panel"><h3>已领取工单详情</h3><div id="ticket"></div></section></div>
+    </section>
+    <section id="operator" class="panel" hidden>
+      <h2>操作员 · 未知调用对账</h2>
+      <p>这里只显示最小调用元数据，不显示客户会话或模型上下文。请依据已核实的用量填写；留空表示仍未知，不是零用量。对账不会重放模型或业务动作，客户需自行发送新消息。</p>
+      <div id="unknown-calls"></div>
+      <form id="reconcile-form">
+        <label for="call-id">已核实的调用 call_id</label><input id="call-id" maxlength="80" required>
+        <label for="call-tokens">已核实 tokens（可留空；0须有依据）</label><input id="call-tokens" type="number" min="0" max="10000000" step="1">
+        <label for="reconcile-note">核实依据及备注</label><textarea id="reconcile-note" maxlength="2000" required rows="3"></textarea>
+        <button type="submit" data-write>记录 no_usable_result 对账，不重放</button>
+      </form>
+    </section>
+    <section id="last-operation" class="panel" hidden><h3>最近一次操作标识</h3><pre id="operation-info"></pre><p class="muted">版本冲突必须重新加载，再重新核对方案；网络结果不明须使用原操作标识核实。</p></section>
+  </main>
+  <footer>本地原创合成商家 Demo · 不是法律规定 · 无真实退款承诺</footer>
+</body>
+</html>

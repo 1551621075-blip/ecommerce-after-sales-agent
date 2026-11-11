@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ecommerce-after-sales-agent"
+version = "0.1.0"
+description = "Local synthetic after-sales agent with evidence and human approval"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.115", "uvicorn>=0.34", "pydantic>=2.10", "httpx>=0.28",
+  "langgraph==1.2.5", "langsmith==0.14.17", "typer>=0.15",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.9", "build>=1.2"]
+
+[project.scripts]
+after-sales = "after_sales.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/after_sales"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["after_sales"]
